@@ -87,6 +87,7 @@ bool HardwareInterface::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw
   std::string script_filename;
   std::string wrench_frame_id;
   std::string speed_scaling_id;
+  std::string heartbeat_id;
   std::string output_recipe_filename;
   std::string input_recipe_filename;
 
@@ -121,6 +122,9 @@ bool HardwareInterface::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw
 
   // Optional parameter to change the id of the speed scaling topic
   robot_hw_nh.param<std::string>("speed_scaling_id", speed_scaling_id, "speed_scaling_factor");
+
+  // Optional parameter to change the id of the robot heartbeat topic
+  robot_hw_nh.param<std::string>("heartbeat_id", heartbeat_id, "heartbeat");
 
   // Path to the urscript code that will be sent to the robot.
   if (!robot_hw_nh.getParam("script_file", script_filename))
@@ -429,6 +433,8 @@ bool HardwareInterface::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw
       new realtime_tools::RealtimePublisher<ur_dashboard_msgs::RobotMode>(robot_hw_nh, "robot_mode", 1, true));
   safety_mode_pub_.reset(
       new realtime_tools::RealtimePublisher<ur_dashboard_msgs::SafetyMode>(robot_hw_nh, "safety_mode", 1, true));
+  heartbeat_pub_.reset(
+      new realtime_tools::RealtimePublisher<std_msgs::Empty>(robot_hw_nh, heartbeat_id, 1, true));
 
   // Set the speed slider fraction used by the robot's execution. Values should be between 0 and 1.
   // Only set this smaller than 1 if you are using the scaled controllers (as by default) or you know what you're
@@ -661,6 +667,16 @@ void HardwareInterface::read(const ros::Time& time, const ros::Duration& period)
     {
       // Normal case
       speed_scaling_combined_ = speed_scaling_ * target_speed_fraction_;
+    }
+
+    // Send heartbeat
+    if (heartbeat_pub_)
+    {
+      if (heartbeat_pub_->trylock())
+      {
+        heartbeat_pub_->msg_ = std_msgs::Empty{};
+        heartbeat_pub_->unlockAndPublish();
+      }
     }
   }
   else

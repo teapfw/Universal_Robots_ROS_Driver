@@ -73,6 +73,10 @@ Parameter to set the id of the wrench frame, required if using multiple robots
 
 Set the topic on which this robot publishes its speed scaling factor.
 
+##### heartbeat_id (default: "heartbeat")
+
+Set the topic on which this robot publishes its heartbeat reflecting received RTDE feedback.
+
 ##### tool_baud_rate (default: "115200")
 
 Baud rate used for tool communication. Only used, when `use_tool_communication` is set to true.

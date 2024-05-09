@@ -34,6 +34,7 @@
 #include <hardware_interface/joint_state_interface.h>
 #include <pass_through_controllers/trajectory_interface.h>
 #include <algorithm>
+#include <std_msgs/Empty.h>
 #include <std_msgs/Bool.h>
 #include <std_msgs/Float64.h>
 #include <std_msgs/String.h>
@@ -312,6 +313,7 @@ protected:
   std::unique_ptr<realtime_tools::RealtimePublisher<ur_msgs::ToolDataMsg>> tool_data_pub_;
   std::unique_ptr<realtime_tools::RealtimePublisher<ur_dashboard_msgs::RobotMode>> robot_mode_pub_;
   std::unique_ptr<realtime_tools::RealtimePublisher<ur_dashboard_msgs::SafetyMode>> safety_mode_pub_;
+  std::unique_ptr<realtime_tools::RealtimePublisher<std_msgs::Empty>> heartbeat_pub_;
 
   ros::ServiceServer set_speed_slider_srv_;
   ros::ServiceServer set_io_srv_;
