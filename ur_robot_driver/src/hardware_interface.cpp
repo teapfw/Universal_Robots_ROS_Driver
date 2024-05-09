@@ -670,7 +670,7 @@ void HardwareInterface::read(const ros::Time& time, const ros::Duration& period)
     }
 
     // Send heartbeat
-    if (robot_status_resource_.in_error != TriState::True)
+    if (robot_status_resource_.in_error != TriState::TRUE)
     {
       if (heartbeat_pub_)
       {
