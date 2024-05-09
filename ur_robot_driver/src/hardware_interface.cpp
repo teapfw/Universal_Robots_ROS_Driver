@@ -670,12 +670,15 @@ void HardwareInterface::read(const ros::Time& time, const ros::Duration& period)
     }
 
     // Send heartbeat
-    if (heartbeat_pub_)
+    if (robot_status_resource_.in_error != TriState::True)
     {
-      if (heartbeat_pub_->trylock())
+      if (heartbeat_pub_)
       {
-        heartbeat_pub_->msg_ = std_msgs::Empty{};
-        heartbeat_pub_->unlockAndPublish();
+        if (heartbeat_pub_->trylock())
+        {
+          heartbeat_pub_->msg_ = std_msgs::Empty{};
+          heartbeat_pub_->unlockAndPublish();
+        }
       }
     }
   }
